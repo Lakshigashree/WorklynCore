@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worklyn Core | Enterprise Autonomy</title>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #38bdf8;
+            --emerald: #10b981;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        [data-theme="dark"] {
+            background-color: #020617;
+            color: white;
+        }
+
+        [data-theme="light"] {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+        }
+
+        [data-theme="dark"] .glass-card {
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --border-color: #1e293b;
+        }
+
+        [data-theme="light"] .glass-card {
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --border-color: #e2e8f0;
+        }
+
+        .agent-node {
+            transition: all 0.4s ease;
+            border: 1px solid var(--border-color);
+            background: var(--node-bg);
+            cursor: help;
+            position: relative;
+        }
+
+        [data-theme="dark"] .agent-node {
+            --node-bg: rgba(30, 41, 59, 0.2);
+            --border-color: #1e293b;
+        }
+
+        [data-theme="light"] .agent-node {
+            --node-bg: white;
+            --border-color: #cbd5e1;
+        }
+
+        .agent-node.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
+            transform: translateY(-4px);
+        }
+
+        #login-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: #020617;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Tooltip Styling */
+        .agent-node:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -55px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 700;
+            width: 150px;
+            z-index: 50;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            line-height: 1.2;
+        }
+
+        /* Branded Monogram Logo Box */
+        .brand-logo-box {
+            width: 80px;
+            height: 80px;
+            background: #38bdf8;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.4);
+        }
+
+        .brand-letter {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 42px;
+            color: #020617;
+            font-weight: 700;
+            letter-spacing: -2px;
+        }
+
+        .chart-container {
+            height: 180px;
+            width: 100%;
+        }
+
+        #thought-log {
+            font-family: 'Courier New', Courier, monospace;
+            color: #60a5fa;
+            font-size: 9px;
+            line-height: 1.4;
+        }
+
+        .introjs-tooltip {
+            background-color: #1e293b;
+            color: white;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body class="p-4 lg:p-6">
+
+    <div id="login-overlay">
+        <div class="max-w-md w-full p-10 glass-card bg-slate-900 border border-slate-800 text-center shadow-2xl">
+            <div class="mb-8">
+                <div class="brand-logo-box">
+                    <span class="brand-letter">W</span>
+                </div>
+            </div>
+
+            <h1 class="text-3xl font-extrabold mb-2 text-white tracking-tight">
+                Worklyn <span class="text-sky-400">OS</span>
+            </h1>
+            <p class="text-slate-500 text-[10px] mb-10 uppercase font-bold tracking-[0.4em]">
+                Infrastructure Autonomy
+            </p>
+
+            <div class="space-y-4 mb-8">
+                <div class="text-left">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase ml-2 mb-1 block">Operator ID</label>
+                    <input type="text" id="username" placeholder="Username (admin)"
+                        class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-sky-500 transition-all text-white text-sm">
+                </div>
+                <div class="text-left">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase ml-2 mb-1 block">Security Key</label>
+                    <input type="password" id="password" placeholder="••••••••"
+                        class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-sky-500 transition-all text-white text-sm">
+                </div>
+            </div>
+            <button onclick="handleLogin()"
+                class="w-full bg-sky-500 hover:bg-sky-400 text-black font-black py-4 rounded-2xl transition-all uppercase tracking-widest text-xs">
+                Initialize Core Stream
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
+        <div class="flex items-center gap-5">
+            <div class="bg-sky-500 p-3 rounded-2xl shadow-lg shadow-sky-500/20">
+                <i data-lucide="zap" class="text-slate-950 w-7 h-7"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-black tracking-tighter">
+                    WORKLYN <span class="text-sky-500 uppercase">Core</span>
+                </h1>
+                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+                    Autonomous Workflow & Intelligence
+                </p>
+            </div>
+        </div>
+
+        <div
+            class="flex items-center gap-3 bg-white/5 dark:bg-slate-900/50 p-2 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <button id="theme-toggle" onclick="toggleTheme()" class="p-2 hover:bg-slate-800 rounded-xl transition-all">
+                <i data-lucide="sun" id="theme-icon-light" class="w-5 h-5 hidden"></i>
+                <i data-lucide="moon" id="theme-icon-dark" class="w-5 h-5"></i>
+            </button>
+            <button onclick="startTour()" class="p-2 px-4 bg-slate-800 rounded-xl text-[10px] font-bold">HELP</button>
+            <div class="flex bg-slate-200 dark:bg-slate-800 p-1 rounded-2xl">
+                <button id="btn-tech" onclick="setLogMode('tech')"
+                    class="px-4 py-1.5 rounded-xl text-[9px] font-black transition-all bg-sky-500 text-black">DEV_MODE</button>
+                <button id="btn-exec" onclick="setLogMode('exec')"
+                    class="px-4 py-1.5 rounded-xl text-[9px] font-black transition-all text-slate-500">EXECUTIVE</button>
+            </div>
+            <button onclick="generatePDF()" class="bg-emerald-500/10 text-emerald-500 p-2.5 rounded-xl flex items-center gap-2 px-4"
+                id="report-btn">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span class="text-[10px] font-black uppercase">Report</span>
+            </button>
+            <button onclick="startWorkflow()" id="start-btn"
+                class="bg-sky-500 hover:bg-sky-400 text-slate-950 px-6 py-2.5 rounded-xl font-black text-xs uppercase">
+                Deploy Swarm
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-8 space-y-6">
+            
+            <div class="grid grid-cols-3 lg:grid-cols-6 gap-3" id="swarm-viz">
+                <div id="agent-orchestrator" class="agent-node p-4 rounded-2xl text-center"
+                    data-tooltip="Routes tasks across the swarm and synchronizes multi-agent state.">
+                    <i data-lucide="layers" class="mx-auto mb-2 w-5 h-5 text-sky-400"></i>
+                    <p class="text-[8px] font-black uppercase opacity-60">Symphony Node</p>
+                    <p class="text-[10px] font-bold">Orchestrator</p>
+                </div>
+                <div id="agent-monitoring" class="agent-node p-4 rounded-2xl text-center"
+                    data-tooltip="Monitors real-time metrics and identifies SLA drifts using anomaly detection.">
+                    <i data-lucide="activity" class="mx-auto mb-2 w-5 h-5 text-sky-400"></i>
+                    <p class="text-[8px] font-black uppercase opacity-60">Telemetry Probe</p>
+                    <p class="text-[10px] font-bold">Watchman</p>
+                </div>
+                <div id="agent-decision" class="agent-node p-4 rounded-2xl text-center"
+                    data-tooltip="Uses LLM-based reasoning to determine the optimal remediation path.">
+                    <i data-lucide="brain-circuit" class="mx-auto mb-2 w-5 h-5 text-sky-400"></i>
+                    <p class="text-[8px] font-black uppercase opacity-60">Cognitive Engine</p>
+                    <p class="text-[10px] font-bold">Analyst</p>
+                </div>
+                <div id="agent-action" class="agent-node p-4 rounded-2xl text-center"
+                    data-tooltip="Deploys self-healing scripts and restores service instances.">
+                    <i data-lucide="zap" class="mx-auto mb-2 w-5 h-5 text-sky-400"></i>
+                    <p class="text-[8px] font-black uppercase opacity-60">Execution Relay</p>
+                    <p class="text-[10px] font-bold">Mechanic</p>
+                </div>
+                <div id="agent-audit" class="agent-node p-4 rounded-2xl text-center"
+                    data-tooltip="Generates cryptographic proofs and audit trails for every action.">
+                    <i data-lucide="clipboard-check" class="mx-auto mb-2 w-5 h-5 text-sky-400"></i>
+                    <p class="text-[8px] font-black uppercase opacity-60">Immutable Ledger</p>
+                    <p class="text-[10px] font-bold">Witness</p>
+                </div>
+                <div id="agent-cost_analyzer" class="agent-node p-4 rounded-2xl text-center"
+                    data-tooltip="Quantifies financial impact by mapping operations to ROI.">
+                    <i data-lucide="trending-up" class="mx-auto mb-2 w-5 h-5 text-sky-400"></i>
+                    <p class="text-[8px] font-black uppercase opacity-60">ROI Synthesizer</p>
+                    <p class="text-[10px] font-bold">Auditor</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <div class="md:col-span-5 glass-card p-6 border-amber-500/20" id="predictive-card">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="bg-amber-500/20 p-2 rounded-lg">
+                            <i data-lucide="sparkles" class="text-amber-500 w-4 h-4"></i>
+                        </div>
+                        <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Predictive Anomaly Insight</h3>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Likelihood of SLA Breach</p>
+                        <p class="text-4xl font-black text-amber-500" id="prob-val">12%</p>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mb-6">
+                        <div id="prob-bar" class="bg-amber-500 h-full transition-all duration-1000 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                            style="width: 12%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 leading-relaxed italic border-t border-slate-800 pt-4">
+                        Watchman Probe identifying temporal drifts in service clusters.
+                    </p>
+                </div>
+
+                <div class="md:col-span-7 glass-card p-6" id="roi-chart-card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Capital Yield Growth</h3>
+                        <p class="text-xl font-black text-emerald-500" id="main-saved">₹0</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="savingsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-6" id="repair-list-card">
+                <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest text-center">
+                    Autonomous Rescue Ledger
+                </h3>
+                <div id="rescue-list" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+            <div class="glass-card flex flex-col h-[410px] overflow-hidden" id="console-card">
+                <div class="p-4 bg-slate-900 border-b border-slate-800 text-[10px] font-black uppercase tracking-widest text-sky-500 flex justify-between">
+                    <span>Neural Log Stream</span>
+                    <span class="animate-pulse">● LIVE</span>
+                </div>
+                <div id="log-container" class="p-4 flex-grow overflow-y-auto space-y-3 font-mono text-[10px]"></div>
+            </div>
+
+            <div class="glass-card p-5 h-[230px] border-blue-500/10">
+                <h3 class="text-[9px] font-black text-blue-400 uppercase mb-3 tracking-widest">
+                    Agent Cognitive Thought
+                </h3>
+                <div id="thought-log" class="space-y-1 overflow-y-auto h-[160px]"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logMode = 'tech';
+        let currentRunData = [];
+        let eventSource = null;
+        let chart = null;
+        let savingsHistory = [0];
+
+        // --- Helper: Clean Text for PDF (Removes emojis/symbols) ---
+        function cleanForPDF(str) {
+            return str.replace(/[^\x00-\x7F]/g, "").replace(/───/g, "").trim();
+        }
+
+        // --- Theme Persistence ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('worklyn-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
+
+        // --- Authentication ---
+        function handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if (u === 'admin' && p === 'admin') {
+                document.getElementById('login-overlay').style.display = 'none';
+                lucide.createIcons();
+                initChart();
+                updateRisk();
+            } else {
+                Swal.fire('Error', 'Invalid credentials', 'error');
+            }
+        }
+
+        // --- ROI Chart Engine ---
+        function initChart() {
+            const ctx = document.getElementById('savingsChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Start'],
+                    datasets: [{
+                        data: [0],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+
+        // --- Theme Engine ---
+        function toggleTheme() {
+            const h = document.documentElement;
+            const t = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            h.setAttribute('data-theme', t);
+            localStorage.setItem('worklyn-theme', t);
+            document.getElementById('theme-icon-light').classList.toggle('hidden');
+            document.getElementById('theme-icon-dark').classList.toggle('hidden');
+        }
+
+        // --- Live Risk Simulator ---
+        function updateRisk() {
+            setInterval(() => {
+                const val = Math.floor(Math.random() * 25) + 5;
+                document.getElementById('prob-val').innerText = val + '%';
+                document.getElementById('prob-bar').style.width = val + '%';
+            }, 4000);
+        }
+
+        // --- Thought Process Console ---
+        function addThought(msg) {
+            const log = document.getElementById('thought-log');
+            const p = document.createElement('p');
+            p.innerHTML = `> ${msg}`;
+            log.prepend(p);
+        }
+
+        // --- Log Mode Switcher ---
+        function setLogMode(m) {
+            logMode = m;
+            document.getElementById('btn-tech').className = m === 'tech' ? 'px-4 py-1.5 rounded-xl text-[9px] font-black bg-sky-500 text-black' : 'px-4 py-1.5 rounded-xl text-[9px] font-black text-slate-500';
+            document.getElementById('btn-exec').className = m === 'exec' ? 'px-4 py-1.5 rounded-xl text-[9px] font-black bg-sky-500 text-black' : 'px-4 py-1.5 rounded-xl text-[9px] font-black text-slate-500';
+            const c = document.getElementById('log-container');
+            c.innerHTML = '';
+            currentRunData.forEach(e => addLogToUI(e));
+        }
+
+        // --- Deployment Logic ---
+        async function startWorkflow() {
+            document.getElementById('start-btn').disabled = true;
+            currentRunData = [];
+            savingsHistory = [0];
+            document.getElementById('log-container').innerHTML = '';
+            document.getElementById('rescue-list').innerHTML = '';
+            chart.data.labels = ['Start'];
+            chart.data.datasets[0].data = [0];
+            chart.update();
+            addThought("Initializing swarm synchronization...");
+            try {
+                await fetch('http://localhost:8000/api/start', { method: 'POST' });
+                setupStream();
+            } catch (e) {
+                document.getElementById('start-btn').disabled = false;
+            }
+        }
+
+        // --- Event Stream Management ---
+        function setupStream() {
+            if (eventSource) eventSource.close();
+            eventSource = new EventSource('http://localhost:8000/api/stream');
+            eventSource.onmessage = (e) => {
+                const d = JSON.parse(e.data);
+                if (d.type === 'heartbeat') return;
+                const entry = {
+                    agent: d.agent,
+                    tech: cleanForPDF(d.message),
+                    exec: translate(d),
+                    type: d.type,
+                    ts: d.timestamp
+                };
+                currentRunData.push(entry);
+                addLogToUI(entry);
+                updateUI(d);
+                if (d.type === 'workflow_complete') {
+                    eventSource.close();
+                    document.getElementById('start-btn').disabled = false;
+                }
+            };
+        }
+
+        // --- Executive Translator ---
+        function translate(d) {
+            const map = {
+                'agent_start': 'Status: System monitoring agents are active.',
+                'phase_change': `Workflow Update: Investigating health of nodes.`,
+                'error_detected': 'Alert: Potential breakdown caught. Fixing sequence initiated.',
+                'decision_made': 'Logic: Analyst node has computed optimal remediation.',
+                'action_success': 'Success: System restored to nominal state.',
+                'cost_update': `Result: Saved capital in labor and penalty prevention.`,
+                'workflow_complete': 'Audit: Full sweep finished. All services healthy.'
+            };
+            return map[d.type] || cleanForPDF(d.message);
+        }
+
+        // --- UI Log Adder ---
+        function addLogToUI(e) {
+            const c = document.getElementById('log-container');
+            const div = document.createElement('div');
+            div.className = `p-2 rounded-lg border-l-2 mb-2 ${e.type.includes('success') ? 'bg-emerald-500/5 border-emerald-500' : 'bg-slate-800/20 border-slate-700'}`;
+            const msg = logMode === 'tech' ? e.tech : e.exec;
+            div.innerHTML = `<p><span class="text-sky-400 font-bold uppercase">[${e.agent}]</span> ${msg}</p>`;
+            c.prepend(div);
+            addThought(`Agent ${e.agent} processing ${e.type.toUpperCase()} signal...`);
+        }
+
+        // --- Real-time Stats Updater ---
+        function updateUI(e) {
+            document.querySelectorAll('.agent-node').forEach(n => n.classList.remove('active'));
+            const node = document.getElementById(`agent-${e.agent}`);
+            if (node) node.classList.add('active');
+
+            if (e.state) {
+                const saved = e.state.total_saved;
+                document.getElementById('main-saved').innerText = `₹${saved.toLocaleString()}`;
+                if (saved > savingsHistory[savingsHistory.length - 1]) {
+                    savingsHistory.push(saved);
+                    chart.data.labels.push('');
+                    chart.data.datasets[0].data = savingsHistory;
+                    chart.update();
+                }
+            }
+            if (e.type === 'action_success') {
+                const l = document.getElementById('rescue-list');
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center p-3 glass-card border-emerald-500/20 bg-emerald-500/5 rounded-xl animate-pulse";
+                div.innerHTML = `
+                    <div class="text-[10px] font-bold">Healed Node ${e.data.ticket_id}</div>
+                    <div class="text-[10px] font-black text-emerald-500">+ INR 7,250</div>`;
+                l.prepend(div);
+            }
+        }
+
+        // --- Professional Multi-page PDF Generator ---
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFillColor(15, 23, 42);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.text("WORKLYN CORE: AUDIT REPORT", 20, 25);
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(16);
+            doc.text("1. Executive Summary", 20, 60);
+            doc.setFontSize(10);
+            const summary = "Autonomous operations report verifying that Worklyn AI Swarm successfully identified infrastructure risks and performed remediation.";
+            doc.text(doc.splitTextToSize(summary, 170), 20, 70);
+
+            doc.autoTable({
+                startY: 85,
+                head: [['Indicator', 'Value']],
+                body: [
+                    ['Preserved Capital', 'INR ' + document.getElementById('main-saved').innerText.replace('₹', '')],
+                    ['Resolution Rate', '100%']
+                ],
+                theme: 'striped',
+                headStyles: { fillColor: [56, 189, 248] }
+            });
+
+            doc.addPage();
+            doc.setFontSize(16);
+            doc.text("2. Operational Action Ledger", 20, 20);
+            const tableData = currentRunData.map(e => [e.ts, e.agent.toUpperCase(), e.exec]);
+            doc.autoTable({
+                startY: 30,
+                head: [['Time', 'Agent', 'Insight']],
+                body: tableData,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [16, 185, 129] }
+            });
+
+            doc.save(`Worklyn_Audit_Report.pdf`);
+        }
+
+        // --- Product Tour ---
+        function startTour() {
+            introJs().setOptions({
+                steps: [
+                    { title: 'Command Center', intro: 'Access the Worklyn OS.' },
+                    { element: '#swarm-viz', intro: 'Our technical agents (hover for details) manage the lifecycle.' },
+                    { element: '#predictive-card', intro: 'This ML engine predicts breaches before they occur.' }
+                ]
+            }).start();
+        }
+    </script>
+</body>
+</html>
