@@ -44,14 +44,14 @@ Modern enterprises face:
 
 Watchman Agent     Analyst Agent      Audit Agent
 (Telemetry Probe)  (Cognitive Engine) (Immutable Ledger)
-│                 │                 │
-▼                 ▼                 ▼
-└──────► Action Agent ◄────────────┘
-(Execution Relay)
-│
-▼
-Cost Analyzer Agent
-(ROI Synthesizer)
+│                       │                 │
+▼                       ▼                 ▼
+└──────►      Action Agent   ◄────────────┘
+          (Execution Relay)
+               │
+               ▼
+    Cost Analyzer Agent
+     (ROI Synthesizer)
 ````
 
 -----
@@ -165,19 +165,19 @@ SLA Penalty Avoided
 
 ### 🖥️ Dashboard Overview
 
-![Dashboard](./screenshots/dashboard.png)
+![Dashboard](./Screenshots/dashboard.png)
 
 ### 🤖 Agent Logs
 
-![Agent Logs](./screenshots/agent-logs.png)
+![Agent Logs](./Screenshots/agent-logs.png)
 
 ### ⚠️ Failure Detection
 
-![Failure](./screenshots/failure.png)
+![Failure](./Screenshots/failure.png)
 
 ### 💰 Cost Savings
 
-![Cost](./screenshots/cost.png)
+![Cost](./Screenshots/cost.png)
 
 -----
 
