@@ -1,4 +1,3 @@
-````markdown
 # 🚀 WORKLYN CORE  
 ### Autonomous Infrastructure & Cost Intelligence Platform  
 
