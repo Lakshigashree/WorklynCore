@@ -44,14 +44,14 @@ Modern enterprises face:
 
 Watchman Agent     Analyst Agent      Audit Agent
 (Telemetry Probe)  (Cognitive Engine) (Immutable Ledger)
-│                       │                 │
-▼                       ▼                 ▼
-└──────►      Action Agent   ◄────────────┘
-          (Execution Relay)
-               │
-               ▼
-    Cost Analyzer Agent
-     (ROI Synthesizer)
+   │                     │                 │
+   ▼                     ▼                 ▼
+   └──────►    Action Agent   ◄────────────┘
+             (Execution Relay)
+                    │
+                    ▼
+           Cost Analyzer Agent
+            (ROI Synthesizer)
 ````
 
 -----
