@@ -165,11 +165,19 @@ SLA Penalty Avoided
 
 ### 🖥️ Dashboard Overview
 
+![Dashboard](./screenshots/dashboard.png)
+
 ### 🤖 Agent Logs
+
+![Agent Logs](./screenshots/agent-logs.png)
 
 ### ⚠️ Failure Detection
 
+![Failure](./screenshots/failure.png)
+
 ### 💰 Cost Savings
+
+![Cost](./screenshots/cost.png)
 
 -----
 
