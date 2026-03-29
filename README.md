@@ -1,176 +1,83 @@
-# NEXUS — Autonomous Multi-Agent Enterprise Workflow System
+# WORKLYN CORE | Autonomous Infrastructure & Cost Intelligence
 
-> SLA Breach Prevention · Real-time Monitoring · Cost ROI Tracking
-
----
-
-## 🏗️ System Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    FRONTEND DASHBOARD                           │
-│          HTML + CSS + JS  (index.html)                          │
-│   Live Logs │ Agent Status │ Cost Savings │ Audit Trail         │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │  SSE Stream + REST API
-                      │
-┌─────────────────────▼───────────────────────────────────────────┐
-│                    FASTAPI BACKEND                              │
-│                                                                  │
-│   ┌──────────────────────────────────────────────────────────┐  │
-│   │                ORCHESTRATOR AGENT                        │  │
-│   │       Controls pipeline, dispatches tickets              │  │
-│   └─────┬──────────────────────────────────────────────┬────┘  │
-│         │ assigns                                  ◄─── │        │
-│   ┌─────▼──────┐  ┌──────────────┐  ┌────────────┐    │        │
-│   │ MONITORING │→ │   DECISION   │→ │   ACTION   │    │        │
-│   │   AGENT    │  │    AGENT     │  │   AGENT    │    │        │
-│   │ Detects    │  │ Chooses fix  │  │ Executes   │    │        │
-│   │ breaches   │  │ & strategy   │  │ + retries  │    │        │
-│   └────────────┘  └──────────────┘  └─────┬──────┘    │        │
-│                                            │           │        │
-│   ┌────────────────────┐   ┌───────────────▼──────┐   │        │
-│   │    AUDIT AGENT     │◄──│  COST ANALYZER AGENT │───┘        │
-│   │  Logs all actions  │   │  Calculates ROI/savings            │
-│   └────────────────────┘   └──────────────────────┘            │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
+**Worklyn OS** is an enterprise-grade "Self-Healing" infrastructure platform designed to eliminate manual IT oversight. By utilizing a swarm of 6 specialized AI agents, Worklyn identifies, predicts, and resolves system failures autonomously while quantifying the financial impact (ROI) in real-time.
 
 ---
 
-## 🤖 Agent Descriptions
+## 🚀 Newly Integrated Features (v10.0)
 
-| Agent | Role | Key Actions |
-|-------|------|-------------|
-| **Orchestrator** | Master controller | Dispatches tickets, manages pipeline flow |
-| **Monitoring** | Issue detection | Scans SLA timers, detects breaches & risks |
-| **Decision** | Remediation planner | Analyzes issue type, selects best fix |
-| **Action** | Executor | Runs fix, retries up to 3× on failure |
-| **Audit** | Compliance logger | Records every event for traceability |
-| **Cost Analyzer** | ROI calculator | Calculates and displays cost savings |
+### 1. Enterprise Identity Portal
+* **Manual Access Control:** Gated login system requiring specialized credentials (`admin` / `admin`).
+* **Branded Monogram:** Professional static branding for a corporate SaaS identity.
+* **Session Management:** Secure initialization of the neural stream only after authorization.
 
----
+### 2. Predictive Anomaly Insight
+* **ML Forecasting:** Rather than just reacting to failure, Worklyn forecasts the **Likelihood of SLA Breach** in real-time.
+* **Proactive Analytics:** Uses temporal pattern analysis to calculate risk scores before a system crash occurs.
 
-## 💰 Cost Savings Formula
+### 3. Multi-Page Enterprise Audit Reports
+* **Sanitized Data Engine:** Custom character-filtering to ensure PDF reports are clean and professional (removes technical symbols/emojis).
+* **Page 1 (Executive Summary):** High-level financial KPIs including Total Capital Preserved (INR) and Resolution Rates.
+* **Page 2 (Operational Ledger):** Detailed, chronological table of every agent decision and action taken during the session.
 
-```
-Savings per resolved ticket =
-  SLA Breach Penalty Avoided  →  ₹5,000
-+ Manual Labor Saved           →  ₹800 - ₹50 = ₹750
-+ Downtime Prevention          →  ₹200/min × 15 min = ₹3,000
-+ Escalation Avoided           →  ₹1,500 (if 0 retries)
-                               ─────────────────────────
-                                  Up to ₹10,250 per ticket
-```
+### 4. Advanced UI/UX Components
+* **Technical Hover Personas:** Professional technical subtitles for agents (e.g., *Telemetry Probe*, *Cognitive Engine*) with hover tooltips explaining their specific technical actions.
+* **Agent Cognitive Thought Console:** A dedicated side-panel showing the "Inner Logic" of the AI swarm in a developer-style terminal font.
+* **Persistent Theme Engine:** Stores User preference (Light/Dark mode) in `localStorage` to ensure a consistent experience across refreshes.
+* **Interactive Onboarding:** Built-in Product Tour (Help System) to guide first-time executive users through the dashboard.
 
 ---
 
-## 📁 Project Structure
+## 🤖 Technical Agent Swarm
 
-```
-multi-agent-system/
-├── backend/
-│   ├── main.py              # FastAPI app + all 6 agent classes
-│   └── requirements.txt     # Python dependencies
-└── frontend/
-    └── index.html           # Single-file dashboard (HTML/CSS/JS)
-```
-
----
-
-## ⚡ Setup Instructions
-
-### Prerequisites
-- Python 3.9+
-- Modern web browser
-
-### Step 1 — Install Backend Dependencies
-
-```bash
-cd multi-agent-system/backend
-pip install -r requirements.txt
-```
-
-### Step 2 — Start the Backend
-
-```bash
-uvicorn main:app --reload --port 8000
-```
-
-You should see:
-```
-INFO:     Uvicorn running on http://127.0.0.1:8000
-INFO:     Application startup complete.
-```
-
-### Step 3 — Open the Frontend
-
-Simply open `frontend/index.html` in your browser:
-```bash
-# macOS
-open frontend/index.html
-
-# Linux
-xdg-open frontend/index.html
-
-# Windows
-start frontend/index.html
-```
-
-Or serve it with Python:
-```bash
-cd frontend
-python -m http.server 3000
-# then visit http://localhost:3000
-```
-
-### Step 4 — Run the Workflow
-
-1. Click **"Launch Dashboard"** on the welcome modal
-2. Click **"▶ Run Workflow"** in the top right
-3. Watch all 6 agents collaborate in real-time!
+| Agent Persona | Technical Identity | Core Responsibility |
+|:--- | :--- | :--- |
+| **Orchestrator** | **Symphony Node** | Routes tasks and synchronizes multi-agent state. |
+| **Watchman** | **Telemetry Probe** | Identifies SLA drifts using real-time anomaly detection. |
+| **Analyst** | **Cognitive Engine** | Uses advanced reasoning to determine optimal remediation paths. |
+| **Mechanic** | **Execution Relay** | Deploys self-healing scripts to restore service instances. |
+| **Witness** | **Immutable Ledger** | Generates cryptographic audit trails for every action. |
+| **Auditor** | **ROI Synthesizer** | Maps operational success directly to preserved capital (INR). |
 
 ---
 
-## 🧪 Sample Output
+## 💰 Financial ROI Logic
 
-```
-08:42:01  [SYSTEM]        🚀 Workflow #A3F7B2 started — SLA Monitoring for 5 enterprise services
-08:42:01  [ORCHESTRATOR]  🎯 Orchestrator online. Starting SLA monitoring workflow.
-08:42:02  [ORCHESTRATOR]  📋 Dispatching ticket TKT-001 (API_FAILURE) to monitoring pipeline
-08:42:02  [MONITORING]    🔍 Scanning TKT-001 — Payment Gateway...
-08:42:03  [MONITORING]    🚨 BREACH DETECTED on TKT-001! Elapsed: 18min / SLA: 15min
-08:42:03  [DECISION]      🧠 Decision Agent analyzing TKT-001 (anomaly score: 0.87)...
-08:42:04  [DECISION]      💡 Decision for TKT-001: → RESTART_SERVICE — Restart microservice pod
-08:42:04  [ACTION]        ⚙️  Executing [restart_service] for TKT-001 (attempt 1/3)...
-08:42:05  [ACTION]        🔄 Attempt 1 failed for TKT-001. Retrying in 1s...
-08:42:06  [ACTION]        ✅ Action SUCCESS: restart_service applied after 2 attempt(s)
-08:42:06  [AUDIT]         📝 Audit record committed: TKT-001 → RESOLVED | Retries: 1
-08:42:07  [COST ANALYZER] 💰 Cost savings for TKT-001: ₹8,750 saved
-```
+Worklyn doesn't just fix bugs; it protects capital. The system calculates:
+* **SLA Penalty Avoidance:** ₹5,000 per prevented breach.
+* **Manual Labor Yield:** ₹750 per autonomous fix (Senior Engineer rate vs. AI overhead).
+* **Downtime Mitigation:** ₹200/min saved by reducing "Mean Time to Recovery" (MTTR).
 
 ---
 
-## 🔌 API Endpoints
+## 🛠️ Technical Stack
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/start` | Start workflow |
-| GET | `/api/state` | Get current state |
-| GET | `/api/stream` | SSE live event stream |
-| GET | `/api/costs` | Cost breakdown |
-| GET | `/docs` | Swagger UI |
+* **Frontend:** HTML5, Tailwind CSS, JavaScript (ES6+)
+* **Backend:** FastAPI (Python), Server-Sent Events (SSE)
+* **Visuals:** Chart.js (ROI Tracking), Lucide Icons
+* **Intelligence:** Custom Agentic Logic & ML Probability Simulators
+* **Documentation:** jsPDF & jsPDF-AutoTable
 
 ---
 
-## 🎯 Use Case: SLA Monitoring
+## 🚦 Getting Started
 
-The system monitors 5 enterprise service tickets:
-- **TKT-001** — Payment Gateway (P1, 15-min SLA)
-- **TKT-002** — User Database (P2, 30-min SLA)
-- **TKT-003** — Search Service (P2, 30-min SLA)
-- **TKT-004** — Auth Service (P1, 15-min SLA)
-- **TKT-005** — Message Queue (P3, 60-min SLA)
+1.  **Start Backend:**
+    ```bash
+    python main.py
+    ```
+2.  **Open Dashboard:**
+    Open `index.html` in any modern browser.
+3.  **Authentication:**
+    * **Operator ID:** `admin`
+    * **Security Key:** `admin`
 
-Each ticket goes through the full agent pipeline: Monitor → Decide → Act → Audit → Cost
+---
+
+## 👤 Author
+**Lakshiga Shree S P**
+*B.Tech Information Technology Student | Panimalar Engineering College*
+*Focus: Agentic AI, RAG, and Autonomous Enterprise Systems.*
+
+---
+*Confidential - Worklyn Autonomous Systems © 2026*
